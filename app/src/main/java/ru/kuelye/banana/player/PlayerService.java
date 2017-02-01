@@ -12,32 +12,78 @@ import android.support.annotation.Nullable;
 
 public class PlayerService extends Service {
 
+    /**
+     * Действие: песня, играй!
+     */
     public static String ACTION_PLAY = "ru.kuelye.banana.player.PLAY";
+    /**
+     * Действие: песня, не играй!
+     */
     public static String ACTION_PAUSE = "ru.kuelye.banana.player.PAUSE";
 
+    /**
+     * Проигрыватель. Виниловый.
+     */
     MediaPlayer player;
-    boolean playing = false;
 
+    /*
+     * Этот метод нам пока не нужен.
+     */
     @Nullable
     @Override
     public IBinder onBind(Intent intent) {
         return null;
     }
 
+    /**
+     * Метод выполняется каждый раз, когда сервису приходит конверт (Intent).
+     */
     public int onStartCommand(Intent intent, int flags, int startId) {
+        // создаём проигрыватель
+        createPlayer();
+
+        // в зависимости от сообщения либо запускаем, либо останавливаем воспроизведение песенки
         if (intent.getAction().equals(ACTION_PLAY)) {
-            if (player == null) {
-                player = MediaPlayer.create(PlayerService.this, R.raw.song);
-            }
-            player.start();
-            playing = true;
+            play();
         } else if (intent.getAction().equals(ACTION_PAUSE)) {
-            if (playing) {
-                player.pause();
-            }
+            pause();
         }
 
         return START_NOT_STICKY;
+    }
+
+    /**
+     * Метод создаёт проигрыватель.
+     * Если он, конечно, уже не создан.
+     */
+    private void createPlayer() {
+        if (player == null) { // если проигрыватель ещё не создан
+            // создаём его
+            player = MediaPlayer.create(PlayerService.this, R.raw.song); // первый параметр - Context, второй - песенка
+        }
+    }
+
+    /**
+     * Метод запускает проигрыватель.
+     * Если, конечно, он уже не запущен.
+     */
+    private void play() {
+        if (!player.isPlaying()) { // если проигрыватель не запущен
+            // запускаем его
+            player.start();
+        }
+    }
+
+    /**
+     * Метод ставит проигрыватель на паузу.
+     * Если, конечно, он запущён.
+     * Если уже стоит на паузе - зачем его ставить на паузу второй раз?
+     */
+    private void pause() {
+        if (player.isPlaying()) { // если проигрыватель запущен
+            // останавливаем его
+            player.pause();
+        }
     }
 
 }
