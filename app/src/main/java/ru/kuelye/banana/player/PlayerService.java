@@ -71,6 +71,8 @@ public class PlayerService extends Service {
         if (!player.isPlaying()) { // если проигрыватель не запущен
             // запускаем его
             player.start();
+            player.setVolume(0.7f, 0.7f);
+            player.setAuxEffectSendLevel(5f);
         }
     }
 
